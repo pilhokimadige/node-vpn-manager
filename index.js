@@ -14,6 +14,10 @@ app.get('/', function(req, res){
 
 var log_data = '';
 
+// TODO: client list variable & routing table variable
+// TODO: csv module http://csv.adaltas.com/
+// TODO: get routing table as array and make html table from it
+
 vpn_client.on('data', function(data) {
 	var read = data.toString();
 	log_data += read;
