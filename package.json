@@ -1,0 +1,10 @@
+{
+  "name": "node-vpn-monitor",
+  "version": "0.0.1",
+  "description": "VPN monitoring and post action triggering service",
+  "dependencies": {
+    "express": "*",
+    "socket.io": "*",
+    "morgan": "*"
+  }
+}
