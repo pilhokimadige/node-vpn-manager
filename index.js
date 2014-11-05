@@ -44,7 +44,7 @@ app.get('/', function(req, res){
 });
 
 // VPN data
-var log_data = '';
+var log_data = [];
 var client_list = [];
 var routing_table = [];
 
@@ -65,25 +65,28 @@ var routing_table = [];
 // END
 vpn_client.on('data', function(data) {
 	var read = data.toString();
-	log_data += read;
-	//read.split(",");
-	//log_data.push(read);
-	//console.log('VPN_CLIENT ON DATA' + log_data);
+	log_data.push(read);
 
-	if(log_data.match(/END/)) {
+	if(read.match(/END/)) {
 		console.log('VPN_CLIENT ON DATA END');
 		vpn_client.end();
 		io.emit('command', log_data);
-		log_data.split(/\n/);
+
+		// data pre-processing. strip
+		var log_string = log_data.toString();
+		var log_split = log_string.split(/\r\n/);
+
 		// Make copy of log_data
 		// iterate line by line
 		// if Common Name, push to client_list[]
 		// if Virtual Address, push to routing_table[]
 		// if END, terminate
-		console.log(log_data);
-		console.log(log_data.length);
-		console.log(log_data[1]);
-		log_data = '';
+		//console.log(log_data);
+		console.log(log_split);
+		console.log(log_split.length);
+
+		// Empty original array
+		log_data.length = 0;
 	}
 });
 
