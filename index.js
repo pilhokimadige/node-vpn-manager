@@ -50,6 +50,7 @@ app.get('/', function(req, res){
 var log_data = [];
 var client_list = [];
 var routing_table = [];
+client_list_string ='';
 routing_table_string ='';
 
 // TODO: get routing table as array and make html table from it
@@ -78,10 +79,25 @@ vpn_client.on('data', function(data) {
 	var read = data.toString();
 	log_data.push(read);
 
+	var csv_client = new Converter({});
+	csv_client.on("end_parsed",function(jsonObj){
+		console.log("Client Converting");
+		console.log(jsonObj); //here is your result json object
+		console.log("Client Converting done");
+	});
+
+	var csv_routing = new Converter({});
+	csv_routing.on("end_parsed",function(jsonObj){
+		console.log("Routing Converting");
+		console.log(jsonObj); //here is your result json object
+		console.log("Routing Converting done");
+		io.emit('command', JSON.stringify(jsonObj));
+	});
+
 	if(read.match(/END/)) {
 		console.log('VPN_CLIENT ON DATA END');
 		vpn_client.end();
-		io.emit('command', log_data);
+		//io.emit('command', log_data);
 
 		// data pre-processing. strip
 		// data will be like a single array ["a", "b",....]
@@ -104,6 +120,7 @@ vpn_client.on('data', function(data) {
 				break;
 			}
 			client_list.push(log_split[i]);
+			client_list_string += log_split[i] + "\n";
 		}
 		for (i; i < log_split.length; ++i) {
 			member = log_split[i].toString();
@@ -118,8 +135,11 @@ vpn_client.on('data', function(data) {
 		// if END, terminate
 		//console.log(log_data);
 		console.log(client_list);
+		streamifier.createReadStream(client_list_string).pipe(csv_client);
+
 		console.log(routing_table);
-		streamifier.createReadStream(routing_table_string).pipe(csvConverter);
+		streamifier.createReadStream(routing_table_string).pipe(csv_routing);
+
 		// Empty original array
 		log_data.length = 0;
 		client_list.length = 0;
