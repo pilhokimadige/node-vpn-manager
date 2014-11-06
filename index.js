@@ -28,6 +28,9 @@ var logger = require('morgan');
 var split = require('split');
 var net = require('net');
 var vpn_client = new net.Socket();
+var MongoClient = require('mongodb').MongoClient;
+var Converter = require('csvtojson').core.Converter;
+var streamifier = require('streamifier');
 
 // Management message parser
 // http://csv.adaltas.com
@@ -47,9 +50,17 @@ app.get('/', function(req, res){
 var log_data = [];
 var client_list = [];
 var routing_table = [];
+routing_table_string ='';
 
-// TODO: client list variable & routing table variable
 // TODO: get routing table as array and make html table from it
+
+var param={};
+var csvConverter=new Converter(param);
+csvConverter.on("end_parsed",function(jsonObj){
+	console.log("Converting");
+	console.log(jsonObj); //here is your result json object
+	console.log("Converting done");
+});
 
 // Data receiving
 // - Message format
@@ -73,20 +84,47 @@ vpn_client.on('data', function(data) {
 		io.emit('command', log_data);
 
 		// data pre-processing. strip
+		// data will be like a single array ["a", "b",....]
 		var log_string = log_data.toString();
 		var log_split = log_string.split(/\r\n/);
 
-		// Make copy of log_data
-		// iterate line by line
+		// iterate array log_split[]
 		// if Common Name, push to client_list[]
+		// push member until meet "ROUTING TABLE"
+		for (i = 0; i < log_split.length; ++i) {
+			// Abandon comlicated contents until meet client list
+			member = log_split[i].toString();
+			if (member.match(/Common Name*/))
+				break;
+		}
+		for (i; i < log_split.length; ++i) {
+			member = log_split[i].toString();
+			if (member.match(/ROUTING TABLE/)) {
+				++i;
+				break;
+			}
+			client_list.push(log_split[i]);
+		}
+		for (i; i < log_split.length; ++i) {
+			member = log_split[i].toString();
+			if (member.match(/GLOBAL STATS/))
+				break;
+			routing_table.push(log_split[i]);
+			routing_table_string += log_split[i] + "\n";
+		}
+
+
 		// if Virtual Address, push to routing_table[]
 		// if END, terminate
 		//console.log(log_data);
-		console.log(log_split);
-		console.log(log_split.length);
-
+		console.log(client_list);
+		console.log(routing_table);
+		streamifier.createReadStream(routing_table_string).pipe(csvConverter);
 		// Empty original array
 		log_data.length = 0;
+		client_list.length = 0;
+		routing_table.length = 0;
+		routing_table_string.length = 0;
 	}
 });
 

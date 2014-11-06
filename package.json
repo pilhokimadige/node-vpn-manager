@@ -5,6 +5,8 @@
   "dependencies": {
     "express": "*",
     "socket.io": "*",
-    "morgan": "*"
+    "morgan": "*",
+    "split": "*",
+    "mongodb": "~2.0"
   }
 }
