@@ -79,22 +79,22 @@ vpn_client.on('data', function(data) {
 	var read = data.toString();
 	log_data.push(read);
 
-	var csv_client = new Converter({});
-	csv_client.on("end_parsed",function(jsonObj){
-		console.log("Client Converting");
-		console.log(jsonObj); //here is your result json object
-		console.log("Client Converting done");
-	});
-
-	var csv_routing = new Converter({});
-	csv_routing.on("end_parsed",function(jsonObj){
-		console.log("Routing Converting");
-		console.log(jsonObj); //here is your result json object
-		console.log("Routing Converting done");
-		io.emit('command', JSON.stringify(jsonObj));
-	});
-
 	if(read.match(/END/)) {
+		var csv_client = new Converter({});
+		csv_client.on("end_parsed",function(jsonObj){
+			console.log("Client Converting");
+			//console.log(jsonObj); //here is your result json object
+			console.log("Client Converting done");
+		});
+
+		var csv_routing = new Converter({});
+		csv_routing.on("end_parsed",function(jsonObj){
+			console.log("Routing Converting");
+			console.log(jsonObj); //here is your result json object
+			console.log("Routing Converting done");
+			io.emit('command', JSON.stringify(jsonObj));
+		});
+
 		console.log('VPN_CLIENT ON DATA END');
 		vpn_client.end();
 		//io.emit('command', log_data);
@@ -141,10 +141,15 @@ vpn_client.on('data', function(data) {
 		streamifier.createReadStream(routing_table_string).pipe(csv_routing);
 
 		// Empty original array
+		read.length = 0;
+		member.length = 0;
 		log_data.length = 0;
+		log_string.length = 0;
+		log_split.length = 0;
 		client_list.length = 0;
+		client_list_string = '';
 		routing_table.length = 0;
-		routing_table_string.length = 0;
+		routing_table_string = '';
 	}
 });
 

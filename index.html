@@ -14,21 +14,20 @@
     </style>
   </head>
   <body>
-    <ul id="messages"></ul>
+    <div id="messages"></div>
     <form action="">
-      <input id="m" autocomplete="off" /><button>Send</button>
+      <button>REFRESH</button>
     </form>
     <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
     <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
     <script>
       var socket = io();
       $('form').submit(function(){
-        socket.emit('command', $('#m').val());
-        $('#m').val('');
+        socket.emit('command', 'status');
         return false;
       });
       socket.on('command', function(msg){
-        $('#messages').append($('<li>').text(msg));
+	document.getElementById("messages").innerHTML="<div>" + msg + "</div>";
       });
     </script>
   </body>
