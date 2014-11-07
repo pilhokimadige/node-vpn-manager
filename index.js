@@ -54,6 +54,7 @@ var client_list = [];
 var routing_table = [];
 client_list_string = '';
 routing_table_string = '';
+var query_count = '';
 
 // TODO: get routing table as array and make html table from it
 
@@ -166,19 +167,19 @@ vpn_client.on('end', function() {
 	console.log('Disconnected');
 });
 
+// set query timer
+setInterval(function() {
+	vpn_client.connect(ADMIN_PORT, VPN_SERVER);
+	console.log('CLIENT: CONNECTED: vpn:9000');
+	vpn_client.write('status\n');
+	console.log('vpn status queried');
+}, 3000);
+
 io.on('connection', function(socket){
 	vpn_client.connect(ADMIN_PORT, VPN_SERVER, function() {
 		console.log('CLIENT: CONNECTED: vpn:9000');
 		vpn_client.write('status\n');
 	})
-
-	// set query timer
-	setInterval(function() {
-		vpn_client.connect(ADMIN_PORT, VPN_SERVER);
-		console.log('CLIENT: CONNECTED: vpn:9000');
-		vpn_client.write('status\n');
-		console.log('vpn status queried');
-	}, 3000);
 
 	socket.on('command', function(msg){
 		// Alter null request to status command
