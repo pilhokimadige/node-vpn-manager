@@ -93,7 +93,7 @@ vpn_client.on('data', function(data) {
 		var csv_routing = new Converter({});
 		csv_routing.on("end_parsed", function(jsonObj){
 			console.log("Routing Converting");
-			console.log(jsonObj); //here is your result json object
+			//console.log(jsonObj); //here is your result json object
 			console.log("Routing Converting done");
 			io.emit('command', JSON.stringify(jsonObj));
 		});
@@ -137,10 +137,10 @@ vpn_client.on('data', function(data) {
 		// if Virtual Address, push to routing_table[]
 		// if END, terminate
 		//console.log(log_data);
-		console.log(client_list);
+		//console.log(client_list);
 		streamifier.createReadStream(client_list_string).pipe(csv_client);
 
-		console.log(routing_table);
+		//console.log(routing_table);
 		streamifier.createReadStream(routing_table_string).pipe(csv_routing);
 
 		// Empty original array
