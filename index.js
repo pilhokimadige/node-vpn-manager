@@ -107,7 +107,6 @@ vpn_client.on('data', function(data) {
 			console.log("Routing Converting done");
 			io.emit('command', table_header
 				+ json2html.transform(JSON.stringify(jsonObj), transform));
-			console.log(json2html.transform(JSON.stringify(jsonObj), transform));
 		});
 
 		console.log('VPN_CLIENT ON DATA END');
