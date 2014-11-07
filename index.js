@@ -31,6 +31,16 @@ var vpn_client = new net.Socket();
 var MongoClient = require('mongodb').MongoClient;
 var Converter = require('csvtojson').core.Converter;
 var streamifier = require('streamifier');
+var json2html = require('node-json2html');
+
+var table_header = "<tr><th>Common Name</th><th>Virtual IP</th><th>Real IP</th><th>Last ref</th></tr>";
+var transform = [
+	{'tag': 'tr', 'children': [
+	{'tag': 'td', 'html':'${Common Name}'},
+	{'tag': 'td', 'html':'${Virtual Address}'},
+	{'tag': 'td', 'html':'${Real Address}'},
+	{'tag': 'td', 'html':'${Last Ref}'}
+	]}];
 
 // Management message parser
 // http://csv.adaltas.com
@@ -95,7 +105,9 @@ vpn_client.on('data', function(data) {
 			console.log("Routing Converting");
 			//console.log(jsonObj); //here is your result json object
 			console.log("Routing Converting done");
-			io.emit('command', JSON.stringify(jsonObj));
+			io.emit('command', table_header
+				+ json2html.transform(JSON.stringify(jsonObj), transform));
+			console.log(json2html.transform(JSON.stringify(jsonObj), transform));
 		});
 
 		console.log('VPN_CLIENT ON DATA END');

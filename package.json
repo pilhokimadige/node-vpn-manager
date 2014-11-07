@@ -9,6 +9,7 @@
     "split": "*",
     "mongodb": "~2.0",
     "csvtojson": "*",
-    "streamifier": "*"
+    "streamifier": "*",
+    "node-json2html": "*"
   }
 }
