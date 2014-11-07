@@ -50,6 +50,7 @@ var transform = [
 // Define your VPN server
 var VPN_SERVER = '10.8.0.1';
 var ADMIN_PORT = '9000';
+var INTERVAL = 10000;	// 10 sec polling interval
 
 app.use(logger('dev'));
 
@@ -185,7 +186,7 @@ setInterval(function() {
 	console.log('CLIENT: CONNECTED: vpn:9000');
 	vpn_client.write('status\n');
 	console.log('vpn status queried');
-}, 3000);
+}, INTERVAL);
 
 io.on('connection', function(socket){
 	vpn_client.connect(ADMIN_PORT, VPN_SERVER, function() {
