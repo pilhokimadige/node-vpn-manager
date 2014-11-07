@@ -33,13 +33,14 @@ var Converter = require('csvtojson').core.Converter;
 var streamifier = require('streamifier');
 var json2html = require('node-json2html');
 
-var table_header = "<tr><th>Common Name</th><th>Virtual IP</th><th>Real IP</th><th>Last ref</th></tr>";
+var table_header = "<tr><th>Common Name</th><th>Virtual IP</th><th>Real IP</th><th>Last ref</th><th>Location</th></tr>";
 var transform = [
 	{'tag': 'tr', 'children': [
 	{'tag': 'td', 'html':'${Common Name}'},
 	{'tag': 'td', 'html':'${Virtual Address}'},
 	{'tag': 'td', 'html':'${Real Address}'},
-	{'tag': 'td', 'html':'${Last Ref}'}
+	{'tag': 'td', 'html':'${Last Ref}'},
+	{'tag': 'td', 'html': ''}
 	]}];
 
 // Management message parser
