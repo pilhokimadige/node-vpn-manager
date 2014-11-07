@@ -42,22 +42,24 @@ var ADMIN_PORT = '9000';
 
 app.use(logger('dev'));
 
-app.get('/', function(req, res){
+app.get('/', function(req, res) {
 	res.sendFile(__dirname + '/index.html');
+
 });
+
 
 // VPN data
 var log_data = [];
 var client_list = [];
 var routing_table = [];
-client_list_string ='';
-routing_table_string ='';
+client_list_string = '';
+routing_table_string = '';
 
 // TODO: get routing table as array and make html table from it
 
-var param={};
-var csvConverter=new Converter(param);
-csvConverter.on("end_parsed",function(jsonObj){
+var param = {};
+var csvConverter = new Converter(param);
+csvConverter.on("end_parsed", function(jsonObj){
 	console.log("Converting");
 	console.log(jsonObj); //here is your result json object
 	console.log("Converting done");
@@ -81,14 +83,14 @@ vpn_client.on('data', function(data) {
 
 	if(read.match(/END/)) {
 		var csv_client = new Converter({});
-		csv_client.on("end_parsed",function(jsonObj){
+		csv_client.on("end_parsed", function(jsonObj){
 			console.log("Client Converting");
 			//console.log(jsonObj); //here is your result json object
 			console.log("Client Converting done");
 		});
 
 		var csv_routing = new Converter({});
-		csv_routing.on("end_parsed",function(jsonObj){
+		csv_routing.on("end_parsed", function(jsonObj){
 			console.log("Routing Converting");
 			console.log(jsonObj); //here is your result json object
 			console.log("Routing Converting done");
@@ -165,6 +167,19 @@ vpn_client.on('end', function() {
 });
 
 io.on('connection', function(socket){
+	vpn_client.connect(ADMIN_PORT, VPN_SERVER, function() {
+		console.log('CLIENT: CONNECTED: vpn:9000');
+		vpn_client.write('status\n');
+	})
+
+	// set query timer
+	setInterval(function() {
+		vpn_client.connect(ADMIN_PORT, VPN_SERVER);
+		console.log('CLIENT: CONNECTED: vpn:9000');
+		vpn_client.write('status\n');
+		console.log('vpn status queried');
+	}, 3000);
+
 	socket.on('command', function(msg){
 		// Alter null request to status command
 		if(msg.length < 1)
