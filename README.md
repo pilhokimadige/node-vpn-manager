@@ -1,4 +1,9 @@
-Aquila node actuator service for SeaHaven cloud
+Node OpenVPN management service
 ======================
 
-Aquila node actuator service for SeaHaven cloud. It runs on Node.JS
+OpenVPN management service running on Node.JS.
+This service is designed to run OpenVPN management job and proceed
+post connection tasks.
+Basically it works on SeaHaven the visual sensor networks cloud to manage
+Aquila nodes joined to the VPN network.
+
